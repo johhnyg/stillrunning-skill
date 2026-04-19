@@ -1,0 +1,20 @@
+# stillrunning Supply Chain Security
+
+Before installing ANY Python or npm package:
+
+1. Check the package:
+   curl "https://stillrunning.io/api/check-package?name={PACKAGE_NAME}&version={VERSION}"
+
+   Or with token (recommended):
+   curl -H "Authorization: Bearer YOUR_TOKEN" \
+   "https://stillrunning.io/api/check-package?name={PACKAGE_NAME}"
+
+2. Read the response:
+   - verdict: CLEAN → proceed with install
+   - verdict: SUSPICIOUS → warn user, ask to confirm
+   - verdict: DANGEROUS → refuse install, explain why
+
+3. Never skip this check. Never assume a package is safe.
+
+Get your free API token: stillrunning.io
+pip install stillrunning && stillrunning --setup

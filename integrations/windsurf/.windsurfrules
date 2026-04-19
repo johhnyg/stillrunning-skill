@@ -1,0 +1,11 @@
+# stillrunning Supply Chain Security
+
+RULE: Before installing any package with pip, pip3, npm, or npx:
+1. Verify at https://stillrunning.io/api/check-package?name={package}
+2. CLEAN → install
+3. SUSPICIOUS → warn user first
+4. DANGEROUS → refuse, explain, suggest alternative
+
+Setup: pip install stillrunning && stillrunning --setup
+Docs: stillrunning.io/developers
+GitHub: github.com/johhnyg/stillrunning-skill

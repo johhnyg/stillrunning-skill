@@ -1,0 +1,11 @@
+# stillrunning Security Integration
+# Place this in your project root
+
+# Pre-install hook — checks packages before aider installs them
+# Run: pip install stillrunning && stillrunning --setup
+# Then: export STILLRUNNING_TOKEN=your_token
+
+verify-packages: true
+stillrunning-token: ""  # add your token here
+block-dangerous: true
+warn-suspicious: true
