@@ -23,23 +23,75 @@ If no token found: use public endpoint (50 free checks/day, no auth required)
 ## Response Handling
 
 CLEAN (score 0-49):
-- Proceed with install
-- No user notification needed
-- Log silently
+→ Install silently. No interruption.
 
 SUSPICIOUS (score 50-79):
-- STOP before installing
-- Tell user: "⚠️ {package}=={version} flagged as SUSPICIOUS (score: {score}). Reason: {reason}. Verify at pypi.org/project/{package} before installing."
-- Ask user to confirm before proceeding
+→ STOP. Show warning:
+  "⚠️ stillrunning: {package}=={version} is SUSPICIOUS
+   Score: {score}/100
+   Reason: {reason}
+   PyPI: pypi.org/project/{package}
+   
+   Options:
+   1. Skip this package
+   2. Install anyway (I accept the risk)
+   3. Check stillrunning.io/threats for details"
+   
+→ Wait for user choice. Never auto-install suspicious packages.
+→ If user chooses 2: install but add warning comment to code:
+  # WARNING: {package} flagged SUSPICIOUS by stillrunning
+  # Score: {score}/100 — installed manually by developer
+  # Review: stillrunning.io/threats
 
 DANGEROUS (score 80-100) or hash mismatch:
-- HARD BLOCK — do not install under any circumstances
-- Tell user: "🚨 BLOCKED: {package}=={version} is DANGEROUS (score: {score}). Reason: {reason}. This package has been blocked by stillrunning."
-- Suggest safe alternative if known
+→ HARD BLOCK by default.
+→ Show:
+  "🚨 stillrunning: {package}=={version} is DANGEROUS
+   Score: {score}/100 
+   Reason: {reason}
+   
+   This package has been flagged as malicious.
+   
+   Override options:
+   1. Block (recommended)
+   2. Force install — type OVERRIDE to confirm
+      (Not recommended. Use only if you verified
+       this is a false positive)"
+
+→ Only proceed if user types exactly: OVERRIDE
+→ If overridden: log to ~/stillrunning_overrides.log with:
+  - timestamp, package, version, score, reason
+  - "manually overridden by developer"
+→ Add prominent warning comment in code:
+  # ⚠️ DANGER: {package} flagged DANGEROUS by stillrunning
+  # Score: {score}/100 — MANUALLY OVERRIDDEN
+  # This is a security risk. Remove if not absolutely needed.
+
+HASH MISMATCH (tampered package):
+→ ALWAYS hard block. No override available.
+→ "🚨 BLOCKED: {package} hash does not match PyPI.
+   This package has been tampered with.
+   No override available — this is not a false positive."
 
 API unavailable:
-- Warn user: "⚠️ Could not verify {package} — stillrunning API unavailable. Install at your own risk."
-- Let user decide
+→ Warn user: "⚠️ Could not verify {package} — stillrunning API unavailable. Install at your own risk."
+→ Let user decide
+
+## Reporting False Positives
+
+If a developer believes a DANGEROUS verdict is wrong:
+→ Tell them: "Email security@stillrunning.io with
+   the package name to request a review.
+  Include: package name, version, why you think 
+   it's clean. We review within 24 hours."
+
+## Override Log
+
+All manual overrides saved to ~/stillrunning_overrides.log
+Format: timestamp | package | version | score | reason | OVERRIDE
+
+Developers can review their overrides:
+cat ~/stillrunning_overrides.log
 
 ## What To Check
 
@@ -76,11 +128,18 @@ Claude: "All 3 packages verified clean by stillrunning. Installing..."
 
 User: "pip install malicious-pkg"
 Claude: [checks malicious-pkg → DANGEROUS score 95]
-Claude: "🚨 BLOCKED: malicious-pkg flagged as DANGEROUS by stillrunning. Credential harvesting detected in source. Not installing."
+Claude: "🚨 stillrunning: malicious-pkg is DANGEROUS
+Score: 95/100
+Reason: Credential harvesting detected
 
-User: "add numpy to my requirements.txt"
-Claude: [checks numpy → CLEAN]
-Claude: "numpy verified clean. Adding to requirements.txt."
+Override options:
+1. Block (recommended)
+2. Force install — type OVERRIDE to confirm"
+
+User: "OVERRIDE"
+Claude: [logs to ~/stillrunning_overrides.log]
+Claude: "Installing malicious-pkg with DANGER warning..."
+[adds warning comment to code]
 
 ## Setup (if user needs it)
 
