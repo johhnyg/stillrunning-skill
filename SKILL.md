@@ -18,7 +18,7 @@ GET https://stillrunning.io/api/check-package?name={PACKAGE_NAME}&version={VERSI
 Authorization: Bearer {API_TOKEN}
 
 Find the user's API token in: ~/stillrunning.yaml under api_token
-If no token found: use public endpoint (50 free checks/day, no auth required)
+If no token found: use public endpoint (10 free checks/day, no auth required)
 
 ## Response Handling
 

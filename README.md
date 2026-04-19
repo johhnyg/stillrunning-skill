@@ -27,7 +27,7 @@ Every time you or Claude Code runs `pip install`, `npm install`, or any package 
 
 ## Public API (no token needed)
 
-50 free checks/day:
+10 free checks/day:
 
 ```
 https://stillrunning.io/api/check-package?name=requests
