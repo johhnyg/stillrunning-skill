@@ -1,6 +1,6 @@
 # stillrunning Security Skill for Claude
 
-Automatically checks every pip and npm package against the stillrunning.io threat database (200,000+ verified malicious packages). Blocks supply chain attacks before they execute.
+> Claude Code skill — automatic supply chain protection against 200,000+ verified malicious packages from 8 threat intelligence sources.
 
 ## Install in Claude Code
 
@@ -10,20 +10,23 @@ git clone https://github.com/johhnyg/stillrunning-skill \
   ~/.claude/skills/stillrunning-skill
 ```
 
-## Install in Claude.ai
+Or via MCP:
 
-1. Download repo as ZIP
-2. Claude.ai > Settings > Capabilities > Skills > Upload
-3. Upload stillrunning-skill/ folder
-4. Toggle on stillrunning-security
+```bash
+claude mcp add stillrunning -- stillrunning mcp
+```
+
+## Supported package managers
+
+pip, uv, poetry, pdm, pipenv, conda, pixi, npm, bun, pnpm
 
 ## What happens after install
 
-Every time you or Claude Code runs `pip install`, `npm install`, or any package command:
+Every time you or Claude Code runs a package install command:
 
 - **CLEAN** - installs silently
-- **SUSPICIOUS** - warns you, asks to confirm
-- **DANGEROUS** - hard blocked, explains why
+- **SUSPICIOUS** - warns you, asks to confirm  
+- **MALICIOUS** - hard blocked, links to advisory
 
 ## Public API (no token needed)
 
@@ -41,6 +44,10 @@ stillrunning --setup
 ```
 
 Token saved to `~/.stillrunning/config.yaml`
+
+## Browse threats
+
+[stillrunning.io/security-advisories](https://stillrunning.io/security-advisories)
 
 ---
 
