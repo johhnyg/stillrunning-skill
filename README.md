@@ -1,6 +1,6 @@
 # stillrunning Security Skill for Claude
 
-Automatically checks every pip and npm package against the stillrunning.io threat database. Blocks supply chain attacks before they execute.
+Automatically checks every pip and npm package against the stillrunning.io threat database (200,000+ verified malicious packages). Blocks supply chain attacks before they execute.
 
 ## Install in Claude Code
 
@@ -30,7 +30,7 @@ Every time you or Claude Code runs `pip install`, `npm install`, or any package 
 10 free checks/day:
 
 ```
-https://stillrunning.io/api/check-package?name=requests
+https://stillrunning.io/api/check-package?name=requests&ecosystem=pip
 ```
 
 ## Get full protection
@@ -40,7 +40,7 @@ pip install stillrunning
 stillrunning --setup
 ```
 
-Token saved to `~/stillrunning.yaml`
+Token saved to `~/.stillrunning/config.yaml`
 
 ---
 
